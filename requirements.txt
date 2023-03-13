@@ -1,0 +1,4 @@
+modal-client
+streamlit
+pandas
+psycopg2
