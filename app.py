@@ -222,6 +222,11 @@ LANGS = {
     "zul": "zul_Latn"
 }
 
+MODELS = {
+    "NLLB (distilled)": "mt_nllb-distilled",
+    "MADLAD-400": "madlad400-3b-mt"
+}
+
 @st.cache_data
 def convert_df(df):
     return df.to_csv(index=False).encode('utf-8')
@@ -239,8 +244,8 @@ def process_file(uploaded_file):
     return df
 
 @st.cache_data
-def translate(inputs):
-    f = modal.Function.lookup("mt_nllb-distilled", "Model.predict")
+def translate(inputs, model):
+    f = modal.Function.lookup(MODELS[model], "Model.predict")
     translations = list(f.map(inputs))
     return translations
 
@@ -291,6 +296,7 @@ uploaded_file = st.file_uploader("Choose a *.txt file to translate:",
                                  type="txt")
 source = st.selectbox('Source Language:', list(LNAMES.keys()), index=43)
 target = st.selectbox('Target Language:', list(LNAMES.keys()))
+model = st.selectbox('Model:', list(MODELS.keys()))
 df_view = st.radio('Sort translation output:', options=[
         'sequentially', 'by quality score (low to high quality)'], horizontal=True)
 
